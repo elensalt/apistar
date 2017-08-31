@@ -89,3 +89,8 @@ class MethodNotAllowed(HTTPException):
 class UnsupportedMediaType(HTTPException):
     default_status_code = 415
     default_detail = 'Unsupported media type'
+
+
+class PreflightRequest(HTTPException):
+    default_status_code = 777
+    default_detail = 'Preflight request'

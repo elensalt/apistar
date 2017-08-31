@@ -108,7 +108,11 @@ class ASyncIOApp(CliApp):
                 [key.encode(), value.encode()]
                 for key, value in response.headers.items()
             ] + [
-                [b'content-type', response.content_type.encode()]
+                [b'content-type', response.content_type.encode()],
+                [b'Content-Type', response.content_type.encode()],
+                [b'Access-Control-Allow-Origin', '*'.encode()],
+                [b'Access-Control-Allow-Headers', 'Origin, Content-Type, Authorization, X-Requested-With, Accept'.encode()],
+                [b'Access-Control-Allow-Methods', 'GET, POST, OPTIONS'.encode()],
             ],
             'content': response.content
         }
@@ -117,6 +121,9 @@ class ASyncIOApp(CliApp):
     def exception_handler(self, exc: Exception) -> http.Response:
         if isinstance(exc, exceptions.Found):
             return http.Response('', exc.status_code, {'Location': exc.location})
+
+        if isinstance(exc, exceptions.PreflightRequest):
+            return http.Response('OK', 200, {}, 'text/plain')
 
         if isinstance(exc, exceptions.HTTPException):
             if isinstance(exc.detail, str):

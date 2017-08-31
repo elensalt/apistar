@@ -85,6 +85,9 @@ class WerkzeugRouter(Router):
         except werkzeug.exceptions.NotFound:
             raise exceptions.NotFound() from None
         except werkzeug.exceptions.MethodNotAllowed:
+          if method == 'OPTIONS':
+            raise exceptions.PreflightRequest() from None
+          else:
             raise exceptions.MethodNotAllowed() from None
         except werkzeug.routing.RequestRedirect as exc:
             path = urlparse(exc.new_url).path
